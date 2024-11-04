@@ -1,0 +1,47 @@
+unit cAtualizacaoCamposMSSQL;
+
+interface
+
+uses System.Classes,
+Vcl.Controls,
+Vcl.ExtCtrls,
+Vcl.Dialogs,
+ZAbstractConnection, ZConnection,
+ZAbstractRODataset, ZAbstractDataset, ZDataset, System.SysUtils, DateUtils,
+cAtualizacaoBancodeDados; //lista de units
+
+type TAtualizacaoCampoMSSQL = class(TAtualizaBancoDados)
+
+private
+  function CampoExisteNaTabela(aNomeTabela, aCampo: String): Boolean;
+
+protected
+
+public
+  constructor Create(aConexao:TZConnection);
+  destructor Destroy;override;
+
+end;
+
+implementation
+
+{ TAtualizacaoCampoMSSQL }
+
+function TAtualizacaoCampoMSSQL.CampoExisteNaTabela(aNomeTabela,
+  aCampo: String): Boolean;
+begin
+
+end;
+
+constructor TAtualizacaoCampoMSSQL.Create(aConexao: TZConnection);
+begin
+
+end;
+
+destructor TAtualizacaoCampoMSSQL.Destroy;
+begin
+
+  inherited;
+end;
+
+end.

@@ -1,0 +1,61 @@
+unit uLogin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  Tfrm_login = class(TForm)
+    Label1: TLabel;
+    edt_usuario: TEdit;
+    edt_senha: TEdit;
+    Label2: TLabel;
+    btn_fechar: TBitBtn;
+    btn_acessar: TBitBtn;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure btn_fecharClick(Sender: TObject);
+    procedure btn_acessarClick(Sender: TObject);
+  private
+  bFechar:Boolean;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_login: Tfrm_login;
+
+implementation
+
+{$R *.dfm}
+
+procedure Tfrm_login.btn_acessarClick(Sender: TObject);
+begin
+ bfechar := True;
+ Close;
+end;
+
+procedure Tfrm_login.btn_fecharClick(Sender: TObject);
+begin
+  if btn_fechar.Focused then
+    MessageDlg('Deseja realmente sair do sistema?', mtConfirmation, [MBOK], [MBNo], 0);
+
+bFechar := True;
+Application.Terminate;
+  end;
+
+
+procedure Tfrm_login.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  CanClose:= bFechar;
+end;
+
+procedure Tfrm_login.FormShow(Sender: TObject);
+begin
+ bFechar:=False;
+end;
+
+end.

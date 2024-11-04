@@ -1,0 +1,135 @@
+inherited frm_usuario: Tfrm_usuario
+  Caption = 'Cadastro de Usu'#225'rio'
+  ClientHeight = 397
+  ClientWidth = 799
+  ExplicitWidth = 811
+  ExplicitHeight = 435
+  TextHeight = 15
+  inherited pnl_rodape: TPanel
+    Top = 356
+    Width = 799
+    ExplicitTop = 355
+    ExplicitWidth = 795
+    DesignSize = (
+      799
+      41)
+    inherited btn_fechar: TBitBtn
+      Left = 691
+      Top = 6
+      ExplicitLeft = 687
+      ExplicitTop = 6
+    end
+    inherited btn_navigator: TDBNavigator
+      Width = 164
+      Hints.Strings = ()
+      ExplicitWidth = 164
+    end
+  end
+  inherited pgc_principal: TPageControl
+    Width = 799
+    Height = 356
+    ActivePage = tab_manutencao
+    ExplicitWidth = 795
+    ExplicitHeight = 355
+    inherited tab_listagem: TTabSheet
+      ExplicitWidth = 791
+      ExplicitHeight = 326
+      inherited pnl_listagem: TPanel
+        Width = 791
+        ExplicitWidth = 791
+      end
+      inherited grd_listagem: TDBGrid
+        Width = 791
+        Height = 253
+        Columns = <
+          item
+            Expanded = False
+            FieldName = 'USUARIOID'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'NOME'
+            Visible = True
+          end>
+      end
+    end
+    inherited tab_manutencao: TTabSheet
+      ExplicitWidth = 791
+      ExplicitHeight = 326
+      object edt_nome: TLabeledEdit
+        Tag = 2
+        Left = 3
+        Top = 88
+        Width = 302
+        Height = 23
+        EditLabel.Width = 33
+        EditLabel.Height = 15
+        EditLabel.Caption = 'Nome'
+        ImeName = 'edt_nome'
+        MaxLength = 50
+        TabOrder = 1
+        Text = ''
+      end
+      object edt_usuarioid: TLabeledEdit
+        Tag = 1
+        Left = 3
+        Top = 40
+        Width = 54
+        Height = 23
+        EditLabel.Width = 39
+        EditLabel.Height = 15
+        EditLabel.Caption = 'C'#243'digo'
+        Enabled = False
+        ImeName = 'edt_clienteid'
+        TabOrder = 0
+        Text = ''
+      end
+      object edt_senha: TLabeledEdit
+        Tag = 2
+        Left = 3
+        Top = 144
+        Width = 209
+        Height = 23
+        EditLabel.Width = 32
+        EditLabel.Height = 15
+        EditLabel.Caption = 'Senha'
+        ImeName = 'edt_nome'
+        MaxLength = 40
+        PasswordChar = '*'
+        TabOrder = 2
+        Text = ''
+      end
+    end
+  end
+  inherited qry_listagem: TZQuery
+    SQL.Strings = (
+      'SELECT'
+      'USUARIOID,'
+      'NOME,'
+      'SENHA'
+      'FROM USUARIOS')
+    Left = 588
+    Top = 34
+    object qry_listagemUSUARIOID: TIntegerField
+      DisplayLabel = 'C'#243'digo'
+      FieldName = 'USUARIOID'
+      ReadOnly = True
+    end
+    object qry_listagemNOME: TWideStringField
+      DisplayLabel = 'Nome'
+      FieldName = 'NOME'
+      Required = True
+      Size = 50
+    end
+    object qry_listagemSENHA: TWideStringField
+      DisplayLabel = 'Senha'
+      FieldName = 'SENHA'
+      Required = True
+      Size = 40
+    end
+  end
+  inherited dts_listagem: TDataSource
+    Left = 668
+  end
+end

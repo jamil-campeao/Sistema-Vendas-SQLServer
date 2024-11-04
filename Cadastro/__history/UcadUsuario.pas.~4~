@@ -1,0 +1,32 @@
+unit UcadUsuario;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Utelaheranca, Data.DB,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls;
+
+type
+  Tfrm_usuario = class(Tfrm_heranca)
+    qry_listagemUSUARIOID: TIntegerField;
+    qry_listagemNOME: TWideStringField;
+    qry_listagemSENHA: TWideStringField;
+    edt_nome: TLabeledEdit;
+    edt_usuarioid: TLabeledEdit;
+    LabeledEdit1: TLabeledEdit;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_usuario: Tfrm_usuario;
+
+implementation
+
+{$R *.dfm}
+
+end.

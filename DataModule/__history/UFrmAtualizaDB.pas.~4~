@@ -1,0 +1,27 @@
+unit UFrmAtualizaDB;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Imaging.pngimage;
+
+type
+  Tfrm_atualizadb = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Image1: TImage;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_atualizadb: Tfrm_atualizadb;
+
+implementation
+
+{$R *.dfm}
+
+end.

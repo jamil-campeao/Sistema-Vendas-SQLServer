@@ -1,0 +1,27 @@
+unit UDtmVenda;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, ZAbstractRODataset,
+  ZAbstractDataset, ZDataset;
+
+type
+  Tdtm_venda = class(TDataModule)
+    qry_cliente: TZQuery;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  dtm_venda: Tdtm_venda;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+end.

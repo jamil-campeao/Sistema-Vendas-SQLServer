@@ -1,0 +1,32 @@
+unit uAlterarSenha;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons;
+
+type
+  Tfrm_alterarsenha = class(TForm)
+    Label1: TLabel;
+    edt_senhaatual: TEdit;
+    Label2: TLabel;
+    edt_novasenha: TEdit;
+    btn_fechar: TBitBtn;
+    btn_alterar: TBitBtn;
+    edt_repetirnovasenha: TEdit;
+    Label3: TLabel;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_alterarsenha: Tfrm_alterarsenha;
+
+implementation
+
+{$R *.dfm}
+
+end.

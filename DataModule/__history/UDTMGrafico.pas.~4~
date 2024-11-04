@@ -1,0 +1,34 @@
+unit UDTMGrafico;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Data.DB, ZAbstractRODataset,
+  ZAbstractDataset, ZDataset;
+
+type
+  Tdtmgrafico = class(TDataModule)
+    qry_produtoestoque: TZQuery;
+    qry_produtoestoqueLABEL: TWideStringField;
+    qry_produtoestoqueVALUE: TFloatField;
+    dts_produtoestoque: TDataSource;
+    qry_valorvendaporcliente: TZQuery;
+    DataSource1: TDataSource;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  dtmgrafico: Tdtmgrafico;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses UDtmConexao;
+
+{$R *.dfm}
+
+end.

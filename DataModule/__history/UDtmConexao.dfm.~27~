@@ -1,0 +1,141 @@
+object DtmPrincipal: TDtmPrincipal
+  Height = 480
+  Width = 640
+  object ConexaoDB: TZConnection
+    ControlsCodePage = cCP_UTF16
+    AutoEncodeStrings = True
+    Catalog = ''
+    Properties.Strings = (
+      'controls_cp=CP_UTF16'
+      'AutoEncodeStrings=True')
+    AutoCommit = False
+    ReadOnly = True
+    TransactIsolationLevel = tiReadCommitted
+    Connected = True
+    HostName = '.\SERVERCURSO'
+    Port = 1433
+    Database = 'VENDAS'
+    User = 'sa'
+    Password = 'Admin100%'
+    Protocol = 'mssql'
+    LibraryLocation = 'C:\ProjetoDelphi\ntwdblib.dll'
+    Left = 136
+    Top = 64
+  end
+  object qry_scriptcategoria: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'CATEGORIAS'#39') IS NULL'
+      'BEGIN'
+      '  CREATE TABLE CATEGORIAS('
+      '    CATEGORIAID INT iDENTITY(1,1) NOT NULL,'
+      '    DESCRICAO VARCHAR(30) NULL,'
+      '    PRIMARY KEY(CATEGORIAID)'
+      '  )'
+      '  END')
+    Params = <>
+    Left = 288
+    Top = 56
+  end
+  object qry_scriptclientes: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'CLIENTES'#39') IS NULL'
+      'BEGIN'
+      '  CREATE TABLE CLIENTES('
+      '    CLIENTEID INT IDENTITY(1,1) NOT NULL,'
+      '    NOME VARCHAR(60) NULL,'
+      '    ENDERECO VARCHAR(60) NULL,'
+      '    CIDADE VARCHAR(50) NULL,'
+      '    BAIRRO VARCHAR(40) NULL,'
+      '    ESTADO VARCHAR(2) NULL,'
+      '    CEP VARCHAR(2) NULL,'
+      '    TELEFONE VARCHAR(14) NULL,'
+      '    EMAIL VARCHAR(100) NULL,'
+      '    DATANASCIMENTO DATETIME NULL'
+      '    PRIMARY KEY (CLIENTEID),'
+      ')'
+      'END')
+    Params = <>
+    Left = 440
+    Top = 104
+  end
+  object qry_scriptprodutos: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'PRODUTOS'#39') IS NULL'
+      'BEGIN'
+      '  CREATE TABLE PRODUTOS('
+      '  PRODUTOID INT IDENTITY(1,1) NOT NULL,'
+      '  NOME VARCHAR(60) NULL,'
+      '  DESCRICAO VARCHAR(255) NULL,'
+      '  VALOR DECIMAL(18,5) DEFAULT 0.00000 NULL,'
+      '  QUANTIDADE DECIMAL(18,5) DEFAULT 0.00000 NULL,'
+      '  CATEGORIAID INT NULL,'
+      '  PRIMARY KEY (PRODUTOID),'
+      '  CONSTRAINT FK_PRODUTOSCATEGORIAS'
+      '  FOREIGN KEY (CATEGORIAID) REFERENCES CATEGORIAS(CATEGORIAID)'
+      '  )'
+      '  END')
+    Params = <>
+    Left = 384
+    Top = 216
+  end
+  object qry_scriptvendas: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'VENDAS'#39') is NULL'
+      'BEGIN'
+      '  CREATE TABLE VENDAS ('
+      '  VENDAID INT IDENTITY(1,1) NOT NULL,'
+      '  CLIENTEID INT NOT NULL,'
+      '  DATAVENDA datetime default getdate(),'
+      '  TOTALVENDA decimal(18,5) default 0.00000,'
+      '  PRIMARY KEY (VENDAID),'
+      '  CONSTRAINT FK_VENDASCLIENTES FOREIGN KEY (CLIENTEID)'
+      '  REFERENCES CLIENTES (CLIENTEID)'
+      '  )'
+      '  END;'
+      '')
+    Params = <>
+    Left = 264
+    Top = 272
+  end
+  object qry_scriptitensvendas: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'VENDASITENS'#39') IS NULL'
+      'BEGIN'
+      '  CREATE TABLE VENDASITENS ('
+      '  VENDAID INT NOT NULL,'
+      '  PRODUTOID INT NOT NULL,'
+      '  VALORUNITARIO DECIMAL (18,5) DEFAULT 0.00000,'
+      '  QUANTIDADE DECIMAL (18,5) DEFAULT 0.00000,'
+      '  TOTALPRODUTO DECIMAL (18,5) DEFAULT 0.00000,'
+      '  PRIMARY KEY (VENDAID,PRODUTOID),'
+      '  CONSTRAINT FK_VENDASITENSPRODUTOS FOREIGN KEY (PRODUTOID)'
+      '  REFERENCES PRODUTOS (PRODUTOID)'
+      '  )'
+      '  END')
+    Params = <>
+    Left = 384
+    Top = 336
+  end
+  object qry_usuario: TZQuery
+    Connection = ConexaoDB
+    SQL.Strings = (
+      'IF OBJECT_ID ('#39'USUARIOS'#39') IS NULL'
+      #9'BEGIN'
+      #9'CREATE TABLE USUARIOS ('
+      #9'USUARIOID INT IDENTITY(1,1) NOT NULL,'
+      #9'NOME VARCHAR(50) NOT NULL,'
+      #9'SENHA VARCHAR(40) NOT NULL,'
+      ''
+      #9'PRIMARY KEY (USUARIOID)'
+      #9')'
+      'END;')
+    Params = <>
+    Left = 504
+    Top = 232
+  end
+end

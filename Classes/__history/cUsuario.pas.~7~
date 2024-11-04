@@ -1,0 +1,200 @@
+unit cUsuario;
+
+interface
+
+uses System.Classes,
+Vcl.Controls,
+Vcl.ExtCtrls,
+Vcl.Dialogs,
+ZAbstractConnection, ZConnection,
+ZAbstractRODataset, ZAbstractDataset, ZDataset, System.SysUtils, DateUtils,
+uFuncaoCriptografia; //lista de units
+
+type
+  TUsuario = class
+    private
+    ConexaoDB:TZConnection;
+    F_usuarioId:Integer;
+    F_nome:string;
+    F_senha:string;
+    function getSenha:string;
+    procedure setSenha(const Value: String);
+
+   public
+    constructor Create(aConexao:TZConnection);
+    destructor Destroy; override;
+    function Inserir:Boolean;
+    function Atualizar:Boolean;
+    function Apagar:Boolean;
+   function Selecionar(id:Integer):Boolean;
+
+   published
+    property codigo                :Integer       read F_usuarioId         write F_usuarioID;
+    property nome                  :string        read F_nome              write F_nome;
+    property senha                 :string        read getSenha            write setsenha;
+  end;
+
+implementation
+
+{$region 'Constructor and Destructor'}
+constructor TUsuario.Create(aConexao: TZConnection);
+  begin
+    ConexaoDB:= aConexao;
+  end;
+
+destructor TUsuario.Destroy;
+  begin
+    inherited;
+  end;
+{$endRegion}
+
+
+{$Region 'Crud'}
+function TUsuario.Apagar: Boolean;
+var Qry:TzQuery;
+  begin
+  if MessageDlg('Apagar o Registro: '+#13+#13+
+                'Código: '+InttoStr(F_usuarioid)+#13+
+                'Descrição :'+F_nome,mtConfirmation,[mbYes, mbNo],0)=mrNo then
+
+                begin
+                  Result:=False;
+                  abort;
+                end;
+
+  try
+  Result:=True;
+  Qry:=TZQuery.Create(nil);
+  Qry.Connection:=ConexaoDB;
+  Qry.SQL.Clear;
+  Qry.SQL.Add('DELETE FROM clientes '+
+              ' WHERE usuarioid= :usuarioid ');
+  Qry.ParamByName('usuarioid').AsInteger:=F_usuarioid;
+
+   Try
+    Qry.ExecSQL;
+    Except
+    Result:=False;
+    End;
+
+  finally
+  if Assigned(Qry) then
+  FreeAndNil(Qry);
+
+  end;
+end;
+
+function TUsuario.Atualizar: Boolean;
+var Qry:TZQuery;
+begin
+  Try
+    Result:=True;
+    Qry:=TZQuery.Create(nil);
+    Qry.Connection:=ConexaoDB;
+    Qry.SQL.Clear;
+    Qry.SQL.Add('UPDATE USUARIOS'+
+                ' SET nome              =:nome '+
+                '    ,senha             =:senha '+
+                ' WHERE usuarioid = :usuarioid ');
+
+    Qry.ParamByName('USUARIOID').AsInteger       :=Self.F_usuarioid;
+    Qry.ParamByName('nome').AsString             :=Self.F_nome;
+    Qry.ParamByName('senha').AsString            :=Self.F_senha;
+
+      Try
+        Qry.ExecSQL;
+      Except
+      Result:=False;
+      End;
+
+  Finally
+  if Assigned(Qry) then
+  FreeAndNil(Qry);
+
+  End;
+end;
+
+
+function TUsuario.Inserir: Boolean;
+var Qry:TZQuery;
+begin
+  Try
+    Result:=True;
+    Qry:=TZQuery.Create(nil);
+    Qry.Connection:=ConexaoDB;
+    Qry.SQL.Clear;
+    Qry.SQL.Add('INSERT INTO USUARIOS (nome, '+
+                '                      senha) '+
+                ' VALUES              (:nome, '+
+                '                      :senha )' );
+
+    Qry.ParamByName('nome').AsString             :=Self.F_nome;
+    Qry.ParamByName('senha').AsString            :=Self.F_senha;
+
+
+      try
+      Qry.ExecSQL;
+      Except
+      Result:=False;
+      end;
+
+  Finally
+  if Assigned(Qry) then
+  FreeAndNil(Qry);
+
+  End;
+
+end;
+
+
+function TUsuario.Selecionar(id: Integer): Boolean;
+var Qry:TZQuery;
+begin
+  Try
+    Result:=True;
+    Qry:=TZQuery.Create(nil);
+    Qry.Connection:=ConexaoDB;
+    Qry.SQL.Clear;
+    Qry.SQL.Add(' SELECT usuarioid, '+
+                '                      nome, '+
+                '                      senha '+
+                ' FROM USUARIOS '+
+                ' WHERE usuarioid = :usuarioid ');
+
+  Qry.ParamByName('usuarioid').AsInteger:=id;
+
+    try
+    Qry.Open;
+    Self.F_usuarioid:=Qry.FieldByName('usuarioid').AsInteger;
+    Self.F_nome:=Qry.FieldByName('nome').AsString;
+    Self.F_senha:=Qry.FieldByName('senha').AsString;
+
+    Except
+    Result:=False;
+    end;
+
+  Finally
+  if Assigned(Qry) then
+  FreeAndNil(Qry);
+  End;
+  End;
+
+  {$ENDREGION}
+
+
+{$REGION 'GET E SET'}
+
+function TUsuario.getSenha: string;
+  begin
+    Result:= Descriptografar(self.F_senha);
+  end;
+
+procedure TUsuario.setSenha(const Value: string);
+  begin
+    Self.F_senha := Criptografar(Value);
+  end;
+
+  {$ENDREGION}
+
+
+end.

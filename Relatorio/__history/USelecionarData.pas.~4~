@@ -1,0 +1,30 @@
+unit USelecionarData;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, RxToolEdit,
+  Vcl.Buttons;
+
+type
+  Tfrm_selecionardata = class(TForm)
+    edt_datainicio: TDateEdit;
+    edt_datafinal: TDateEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    BitBtn1: TBitBtn;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_selecionardata: Tfrm_selecionardata;
+
+implementation
+
+{$R *.dfm}
+
+end.

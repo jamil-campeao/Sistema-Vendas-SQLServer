@@ -1,0 +1,370 @@
+unit uProVenda;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Utelaheranca, Data.DB,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.DBGrids, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.DBCtrls, Vcl.Buttons, UDtmConexao, UDtmVenda,
+  RxToolEdit, RxCurrEdit, UEnum, cProVenda;
+
+type
+  Tfrm_provenda = class(Tfrm_heranca)
+    qry_listagemVENDAID: TIntegerField;
+    qry_listagemCLIENTEID: TIntegerField;
+    qry_listagemNOME: TWideStringField;
+    qry_listagemDATAVENDA: TDateTimeField;
+    qry_listagemTOTALVENDA: TFloatField;
+    edt_vendaid: TLabeledEdit;
+    Label4: TLabel;
+    lkp_cliente: TDBLookupComboBox;
+    edt_datavenda: TDateEdit;
+    Label1: TLabel;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    edt_valortotal: TCurrencyEdit;
+    Label2: TLabel;
+    dbgrid_itensvenda: TDBGrid;
+    lkp_produto: TDBLookupComboBox;
+    Label3: TLabel;
+    edt_valorunitario: TCurrencyEdit;
+    edt_quantidade: TCurrencyEdit;
+    edt_totalproduto: TCurrencyEdit;
+    btn_adicionaritem: TBitBtn;
+    btn_apagaritem: TBitBtn;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure grd_listagemKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure btn_alterarClick(Sender: TObject);
+    procedure btn_novoClick(Sender: TObject);
+    procedure btn_adicionaritemClick(Sender: TObject);
+    procedure lkp_produtoExit(Sender: TObject);
+    procedure edt_valorunitarioExit(Sender: TObject);
+    procedure edt_quantidadeExit(Sender: TObject);
+    procedure lkp_clienteExit(Sender: TObject);
+    procedure edt_datavendaExit(Sender: TObject);
+    procedure btn_cancelarClick(Sender: TObject);
+    procedure btn_gravarClick(Sender: TObject);
+    procedure btn_apagaritemClick(Sender: TObject);
+    procedure dbgrid_itensvendaDblClick(Sender: TObject);
+  private
+  Dtm_venda:Tdtm_venda;
+  oVenda:TVenda;
+  function Gravar(EstadodoCadastro:TEstadoDoCadastro):boolean; override;
+  function Apagar:Boolean; override;
+  function TotalizarProduto(ValorUnitario, Quantidade: Double): Double;
+  procedure LimparComponenteItem;
+    procedure LimparCds;
+    procedure CarregarRegistroSelecionado;
+    function TotalizarVenda: Double;
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_provenda: Tfrm_provenda;
+
+implementation
+
+{$R *.dfm}
+
+uses uRelVenda;
+//BOTAO APAGAR
+function Tfrm_provenda.Apagar:Boolean;
+begin
+if oVenda.Selecionar(Qry_Listagem.FieldByName('VENDAID').AsInteger, dtm_venda.cds_itensvenda) then
+  begin
+    Result:=oVenda.Apagar;
+  end;
+end;
+
+//BOTAO GRAVAR
+
+function Tfrm_provenda.Gravar(EstadodoCadastro: TEstadodoCadastro): Boolean;
+begin
+  if edt_vendaid.Text <>EmptyStr then
+  oVenda.vendaid:=StrToInt(Edt_vendaid.Text)
+  else
+  oVenda.vendaid:=0;
+
+  oVenda.clienteid            :=lkp_cliente.KeyValue;
+  oVenda.DataVenda            :=edt_datavenda.Date;
+  oVenda.TotalVenda           :=edt_valortotal.Value;
+
+if (EstadodoCadastro=EcInserir) then
+  oVenda.Vendaid := oVenda.Inserir(dtm_venda.cds_itensvenda)
+
+  else if (EstadodoCadastro=ecAlterar) then
+  oVenda.Atualizar(dtm_venda.cds_itensvenda);
+
+  frm_relvenda:= Tfrm_relvenda.Create(self);
+  frm_relvenda.qry_venda.Close;
+  frm_relvenda.qry_venda.ParamByName('VENDAID').AsInteger:= oVenda.vendaid;
+  frm_relvenda.qry_venda.Open;
+
+  frm_relvenda.qry_vendaitens.Close;
+  frm_relvenda.qry_vendaitens.ParamByName('VENDAID').AsInteger:= oVenda.vendaid;
+  frm_relvenda.qry_vendaitens.Open;
+
+  frm_relvenda.Relatorio.PreviewModal;
+  frm_relvenda.Release;
+
+  Result:=True;
+  end;
+  {$Endregion}
+
+//BOTAO ADICIONAR PRODUTO NA VENDA
+procedure Tfrm_provenda.btn_adicionaritemClick(Sender: TObject);
+begin
+  inherited;
+
+    if dtm_venda.cds_itensvenda.Locate('PRODUTOID', lkp_produto.KeyValue, []) then
+    begin
+      MessageDlg('Este Produto já foi selecionado', mtInformation, [mbOK], 0);
+      lkp_produto.SetFocus;
+      Abort;
+    end
+
+    else
+
+    edt_totalproduto.Value:=TotalizarProduto(edt_valorunitario.Value, edt_quantidade.Value);
+
+dtm_venda.cds_itensvenda.Append;
+dtm_venda.cds_itensvenda.FieldByName('PRODUTOID').AsString:=lkp_produto.KeyValue;
+dtm_venda.cds_itensvenda.FieldByName('NOMEPRODUTO').AsString:=dtm_venda.qry_produto.FieldByName('NOME').AsString;
+dtm_venda.cds_itensvenda.FieldByName('QUANTIDADE').AsFloat:=edt_quantidade.Value;
+dtm_venda.cds_itensvenda.FieldByName('VALORUNITARIO').AsFloat:=edt_valorunitario.Value;
+dtm_venda.cds_itensvenda.FieldByName('VALORTOTALPRODUTO').AsFloat:=edt_totalproduto.Value;
+dtm_venda.cds_itensvenda.Post;
+
+edt_valortotal.Value:= TotalizarVenda;
+
+LimparComponenteItem;
+
+lkp_produto.SetFocus;
+end;
+
+ //PRODCEDURE PARA LIMPAR OS COMPONENTES APÓS INSERÇÃO
+procedure Tfrm_provenda.LimparComponenteItem;
+begin
+  lkp_produto.KeyValue    := null;
+  edt_quantidade.Value    := 0;
+  edt_valorunitario.Value := 0;
+  edt_totalproduto.Value  := 0
+end;
+
+
+//Calculo valor total produto
+function TFrm_provenda.TotalizarProduto(ValorUnitario, Quantidade:Double) :Double;
+  begin
+    Result:=Valorunitario * Quantidade;
+  end;
+
+
+procedure Tfrm_provenda.LimparCds;
+begin
+ dtm_venda.cds_itensvenda.First;
+ while not dtm_venda.cds_itensvenda.Eof do
+  dtm_venda.cds_itensvenda.Delete;
+end;
+
+
+procedure Tfrm_provenda.btn_alterarClick(Sender: TObject);
+begin
+ if oVenda.Selecionar(Qry_listagem.FieldByName('VENDAID').AsInteger, dtm_venda.cds_itensvenda) then
+  begin
+    edt_vendaid.Text         :=InttoStr(oVenda.vendaid);
+    lkp_cliente.KeyValue     :=oVenda.clienteid;
+    edt_datavenda.Date       :=oVenda.datavenda;
+    edt_valortotal.Value     :=oVenda.totalvenda;
+  end
+
+  else
+  begin
+  MessageDlg('Erro ao executar operação. Entre em contato com o Jamil', TMsgDlgType.mtError, [mbOK], 0);
+    btn_cancelar.Click;
+    Abort;
+  end;
+  inherited;
+
+end;
+
+procedure Tfrm_provenda.btn_apagaritemClick(Sender: TObject);
+begin
+  inherited;
+  if lkp_produto.KeyValue=Null then
+    begin
+      MessageDlg('Selecione o Produto a ser excluido', mtInformation, [mbOK], 0);
+      dbgrid_itensvenda.SetFocus;
+      abort;
+    end;
+
+    if dtm_venda.cds_itensvenda.Locate('PRODUTOID', lkp_produto.KeyValue, []) then
+      begin
+       dtm_venda.cds_itensvenda.Delete;
+       edt_valortotal.Value:= TotalizarVenda;
+       LimparComponenteItem;
+      end;
+
+end;
+
+procedure Tfrm_provenda.btn_cancelarClick(Sender: TObject);
+begin
+  inherited;
+  LimparCds;
+end;
+
+procedure Tfrm_provenda.btn_gravarClick(Sender: TObject);
+begin
+  inherited;
+   LimparCds;
+end;
+
+procedure Tfrm_provenda.btn_novoClick(Sender: TObject);
+begin
+  inherited;
+  edt_datavenda.Date:=Date;
+  lkp_cliente.SetFocus;
+  LimparCds;
+
+end;
+
+procedure Tfrm_provenda.edt_datavendaExit(Sender: TObject);
+begin
+  inherited;
+  if edt_datavenda.Date = 0 then
+    begin
+      MessageDlg('Data é um campo obrigatório', mtInformation, [MBOK], 0);
+      edt_datavenda.SetFocus;
+      abort;
+    end
+end;
+
+procedure Tfrm_provenda.edt_quantidadeExit(Sender: TObject);
+begin
+  inherited;
+
+    if edt_quantidade.Value<=0 then
+    begin
+      MessageDlg('Quantidade não pode ser menor ou igual a zero', mtInformation, [MBOK], 0);
+      edt_quantidade.SetFocus;
+      abort;
+    end
+
+    else
+   edt_totalproduto.Value:=TotalizarProduto(edt_valorunitario.Value, edt_quantidade.Value);
+end;
+
+procedure Tfrm_provenda.edt_valorunitarioExit(Sender: TObject);
+begin
+  inherited;
+    if edt_valorunitario.Value<=0 then
+    begin
+      Messagedlg('Valor Unitário não pode ser menor ou igual a zero', mtInformation, [MBOK], 0);
+      edt_valorunitario.SetFocus;
+      abort;
+    end
+  else
+  edt_quantidade.Value:= 1;
+end;
+
+procedure Tfrm_provenda.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  inherited;
+
+ if assigned(dtm_venda) then
+ FreeandNil(dtm_venda);
+
+
+  if assigned(oVenda) then
+ FreeandNil(oVenda);
+
+end;
+
+procedure Tfrm_provenda.FormCreate(Sender: TObject);
+begin
+  inherited;
+  dtm_venda:=TDtm_venda.Create(self);
+
+  oVenda:=TVenda.Create(dtmprincipal.ConexaoDB);
+  IndiceAtual:='clienteid';
+
+end;
+
+procedure Tfrm_provenda.grd_listagemKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  inherited;
+  BloqueiaCtrl_DEL_DbGrid(Key,Shift);
+end;
+
+procedure Tfrm_provenda.lkp_clienteExit(Sender: TObject);
+begin
+  inherited;
+  if VarIsNull (lkp_cliente.KeyValue) then
+    begin
+    if not (btn_cancelar.Focused or dbgrid_itensvenda.Focused) then
+      begin
+      MessageDlg('Cliente é um campo obrigatório', mtInformation, [MBOK], 0);
+      lkp_cliente.SetFocus;
+      abort;
+      end;
+    end
+end;
+
+procedure Tfrm_provenda.lkp_produtoExit(Sender: TObject);
+begin
+  inherited;
+    if VarIsnull(lkp_produto.KeyValue) then
+      begin
+      //Verifica se o botao Cancelar e dbgrid nao foram clicados
+      if not (btn_cancelar.Focused or dbgrid_itensvenda.Focused or btn_gravar.Focused) then
+        begin
+        MessageDlg('Produto é um campo obrigatório', mtInformation, [MBOK], 0);
+        lkp_produto.SetFocus;
+        abort;
+        end;
+    end
+
+   else
+   begin
+   edt_valorunitario.Value:=dtm_venda.qry_produto.FieldByName('valor').AsFloat;
+   end;
+
+end;
+
+  procedure Tfrm_provenda.CarregarRegistroSelecionado;
+  begin
+   lkp_produto.KeyValue     := dtm_venda.cds_itensvenda.FieldByName('PRODUTOID').AsString;
+   edt_quantidade.Value     := dtm_venda.cds_itensvenda.FieldByName('QUANTIDADE').AsFloat;
+   edt_valorunitario.Value  := dtm_venda.cds_itensvenda.FieldByName('VALORUNITARIO').AsFloat;
+   edt_totalproduto.Value   := dtm_venda.cds_itensvenda.FieldByName('VALORTOTALPRODUTO').AsFloat;
+  end;
+
+procedure Tfrm_provenda.dbgrid_itensvendaDblClick(Sender: TObject);
+begin
+  inherited;
+  CarregarRegistroSelecionado;
+end;
+
+function Tfrm_provenda.TotalizarVenda:Double;
+var Valor:Double;
+  begin
+  result := 0;
+  dtm_venda.cds_itensvenda.First;
+    while not dtm_venda.cds_itensvenda.eof do
+      begin
+        result := result + dtm_venda.cds_itensvenda.FieldByName('VALORTOTALPRODUTO').AsFloat;
+        dtm_venda.cds_itensvenda.Next;
+      end;
+  end;
+
+end.

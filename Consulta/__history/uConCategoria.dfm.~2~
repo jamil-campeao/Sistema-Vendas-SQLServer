@@ -1,0 +1,16 @@
+inherited frm_concategoria: Tfrm_concategoria
+  Caption = 'Consulta de Categorias'
+  TextHeight = 15
+  inherited Panel1: TPanel
+    ExplicitWidth = 886
+  end
+  inherited Panel2: TPanel
+    inherited btn_fechar: TBitBtn
+      Left = 783
+      ExplicitLeft = 779
+    end
+  end
+  inherited qry_listagem: TZQuery
+    Connection = DtmPrincipal.ConexaoDB
+  end
+end

@@ -1,0 +1,35 @@
+unit uTelaHerancaConsulta;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, ZAbstractRODataset, ZAbstractDataset,
+  ZDataset, Vcl.Buttons;
+
+type
+  Tfrm_herancaconsulta = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    msk_pesquisar: TMaskEdit;
+    lbl_indice: TLabel;
+    qry_listagem: TZQuery;
+    dts_listagem: TDataSource;
+    grd_pesquisa: TDBGrid;
+    btn_fechar: TBitBtn;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frm_herancaconsulta: Tfrm_herancaconsulta;
+
+implementation
+
+{$R *.dfm}
+
+end.

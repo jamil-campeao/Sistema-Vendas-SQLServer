@@ -1,0 +1,34 @@
+unit UDtmConexao;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, ZAbstractConnection, ZConnection, Data.DB,
+  ZAbstractRODataset, ZAbstractDataset, ZDataset;
+
+type
+  TDtmPrincipal = class(TDataModule)
+    ConexaoDB: TZConnection;
+    qry_scriptclientes: TZQuery;
+    qry_scriptprodutos: TZQuery;
+    qry_scriptvendas: TZQuery;
+    qry_scriptitensvendas: TZQuery;
+    qry_usuario: TZQuery;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  DtmPrincipal: TDtmPrincipal;
+
+implementation
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+uses Utelaheranca;
+
+{$R *.dfm}
+
+end.

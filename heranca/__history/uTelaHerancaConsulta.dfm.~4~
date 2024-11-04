@@ -1,0 +1,91 @@
+object frm_herancaconsulta: Tfrm_herancaconsulta
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'DIGITE O TITULO'
+  ClientHeight = 531
+  ClientWidth = 1044
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poScreenCenter
+  TextHeight = 15
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 1044
+    Height = 65
+    Align = alTop
+    TabOrder = 0
+    ExplicitWidth = 927
+    object lbl_indice: TLabel
+      Left = 24
+      Top = 15
+      Width = 51
+      Height = 15
+      Caption = 'lbl_indice'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+    end
+    object msk_pesquisar: TMaskEdit
+      Left = 24
+      Top = 36
+      Width = 441
+      Height = 23
+      TabOrder = 0
+      Text = ''
+      TextHint = 'Digite sua Pesquisa'
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 490
+    Width = 1044
+    Height = 41
+    Align = alBottom
+    TabOrder = 1
+    ExplicitLeft = 376
+    ExplicitTop = 320
+    ExplicitWidth = 185
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 65
+    Width = 1044
+    Height = 425
+    Align = alClient
+    TabOrder = 2
+    ExplicitLeft = 392
+    ExplicitTop = 200
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object grd_pesquisa: TDBGrid
+      Left = 1
+      Top = 1
+      Width = 1042
+      Height = 423
+      Align = alClient
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -12
+      TitleFont.Name = 'Segoe UI'
+      TitleFont.Style = []
+    end
+  end
+  object ZQuery1: TZQuery
+    Params = <>
+    Left = 720
+    Top = 16
+  end
+  object DataSource1: TDataSource
+    Left = 856
+  end
+end
